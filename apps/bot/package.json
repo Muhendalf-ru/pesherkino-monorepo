@@ -1,0 +1,17 @@
+{
+  "name": "bot",
+  "private": true,
+  "scripts": {
+    "build": "tsc --build",
+    "start:dev": "cross-env BOT_PORT=4000 ts-node src/main.ts",
+    "start:prod": "cross-env BOT_PORT=4000 node dist/main.js"
+  },
+  "dependencies": {
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}

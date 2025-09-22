@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.0.0",
+    "dotenv-cli": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "packageManager": "yarn@4.10.2",
+  "dependencies": {
+    "@typegoose/typegoose": "^12.19.0",
+    "dotenv": "^17.2.2",
+    "mongoose": "^8.18.1"
+  },
+  "scripts": {
+    "build:db": "yarn workspace db build",
+    "build:backends": "yarn workspaces foreach -pt -W run build:backend",
+    "build:frontends": "yarn workspaces foreach -pt -W run build:frontend",
+    "build:bot": "yarn workspace bot build",
+    "build:all": "yarn build:db && yarn build:backends && yarn build:frontends && yarn build:bot",
+    "dev:frontends": "concurrently -k -n 'FRONT_MAIN,FRONT_ADMIN,FRONT_LANDING' -c 'green,blue,magenta' \"yarn workspace frontend-main dev\" \"yarn workspace frontend-admin dev\" \"yarn workspace frontend-landing dev\"",
+    "dev:backends": "concurrently -k -n 'API,ADMIN' -c 'cyan,magenta' \"yarn workspace backend-api start:dev\" \"yarn workspace backend-admin start:dev\"",
+    "dev:all": "concurrently -k -n 'BACKENDS,FRONTENDS' -c 'cyan,green' \"yarn dev:backends\" \"yarn dev:frontends\""
+  }
+}
