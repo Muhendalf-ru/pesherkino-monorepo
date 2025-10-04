@@ -26,8 +26,8 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Копируем только собранный билд backend-admin
-COPY --from=build /app/packages/backend-admin/dist ./dist
-COPY --from=build /app/packages/backend-admin/package.json ./package.json
+COPY --from=build /app/apps/backend-admin/dist ./dist
+COPY --from=build /app/apps/backend-admin/package.json ./package.json
 
 # Устанавливаем только production-зависимости для backend-admin
 RUN yarn workspaces focus --production --pattern backend-admin

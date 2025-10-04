@@ -19,7 +19,7 @@ RUN yarn workspace frontend-admin build
 FROM nginx:alpine
 
 # Копируем готовый билд в директорию nginx
-COPY --from=build /app/packages/frontend-admin/dist /usr/share/nginx/html
+COPY --from=build /app/apps/frontend-admin/dist /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

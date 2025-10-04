@@ -23,8 +23,8 @@ RUN corepack enable && corepack prepare yarn@4.10.2 --activate
 WORKDIR /app
 
 # Копируем только собранный билд и package.json для bot
-COPY --from=build /app/packages/bot/dist ./dist
-COPY --from=build /app/packages/bot/package.json ./package.json
+COPY --from=build /app/apps/bot/dist ./dist
+COPY --from=build /app/apps/bot/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
 
 # Устанавливаем только production-зависимости для bot

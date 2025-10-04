@@ -26,8 +26,8 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Копируем только собранный билд backend-api
-COPY --from=build /app/packages/backend-api/dist ./dist
-COPY --from=build /app/packages/backend-api/package.json ./package.json
+COPY --from=build /app/apps/backend-api/dist ./dist
+COPY --from=build /app/apps/backend-api/package.json ./package.json
 
 # Устанавливаем только production-зависимости для backend-api
 RUN yarn workspaces focus --production --pattern backend-api
