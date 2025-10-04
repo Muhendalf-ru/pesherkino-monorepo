@@ -8,8 +8,10 @@
     "paths": {
       "db": ["../../packages/db/src"],
       "db/*": ["../../packages/db/src/*"]
-    }
+    },
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "references": [{ "path": "../../packages/db" }]
 }

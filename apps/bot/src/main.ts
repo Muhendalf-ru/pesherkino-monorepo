@@ -1,7 +1,8 @@
+import "reflect-metadata";
 import { Telegraf } from "telegraf";
-import { UserModel } from "db";
 import mongoose from "mongoose";
 import "dotenv/config";
+import { UserModel } from "db";
 
 const bot = new Telegraf(process.env.BOT_TOKEN || "");
 
@@ -13,7 +14,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN || "");
       name: ctx.from.first_name,
       email: `${ctx.from.id}@tg.local`,
     });
-    ctx.reply(`Привет, ${user.name}!`);
+    ctx.reply(`Привет!`);
   });
 
   bot.launch();
