@@ -13,14 +13,13 @@ COPY . .
 RUN yarn install --inline-builds
 
 # Собираем frontend-admin
-WORKDIR /app/apps/frontend-admin
-RUN yarn build
+RUN yarn workspace frontend-admin build
 
 # ====== Runtime stage ======
 FROM nginx:alpine
 
-# Копируем готовый билд
-COPY --from=build /app/apps/frontend-admin/dist /usr/share/nginx/html
+# Копируем готовый билд в директорию nginx
+COPY --from=build /app/packages/frontend-admin/dist /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

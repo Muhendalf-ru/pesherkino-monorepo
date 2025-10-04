@@ -12,9 +12,8 @@ COPY . .
 # Устанавливаем все зависимости для workspace
 RUN yarn install --inline-builds
 
-# Собираем backend-admin
-WORKDIR /app/apps/backend-admin
-RUN yarn build
+# Собираем backend-api
+RUN yarn workspace backend-api build
 
 # ====== Runtime stage ======
 FROM node:20-alpine
@@ -23,13 +22,16 @@ RUN corepack enable && corepack prepare yarn@4.10.2 --activate
 
 WORKDIR /app
 
-# Копируем только собранный билд и package.json
-COPY --from=build /app/apps/backend-admin/dist ./dist
-COPY --from=build /app/apps/backend-admin/package.json ./package.json
-COPY --from=build /app/yarn.lock ./yarn.lock
+# Копируем package.json и yarn.lock для runtime
+COPY package.json yarn.lock ./
 
-# Устанавливаем только production-зависимости для backend-admin
-RUN yarn workspaces focus --production --all
+# Копируем только собранный билд backend-api
+COPY --from=build /app/packages/backend-api/dist ./dist
+COPY --from=build /app/packages/backend-api/package.json ./package.json
 
-EXPOSE 3003
+# Устанавливаем только production-зависимости для backend-api
+RUN yarn workspaces focus --production --pattern backend-api
+
+EXPOSE 3000
+
 CMD ["node", "dist/main.js"]

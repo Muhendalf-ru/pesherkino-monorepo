@@ -12,15 +12,14 @@ COPY . .
 # Устанавливаем все зависимости для сборки (включая dev)
 RUN yarn install --inline-builds
 
-# Собираем frontend-landing
-WORKDIR /app/apps/frontend-landing
-RUN yarn build
+# Собираем frontend-landing через workspace
+RUN yarn workspace frontend-landing build
 
 # ====== Runtime stage ======
 FROM nginx:alpine
 
-# Копируем готовый билд
-COPY --from=build /app/apps/frontend-landing/dist /usr/share/nginx/html
+# Копируем готовый билд в директорию nginx
+COPY --from=build /app/packages/frontend-landing/dist /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,8 +1,11 @@
+version: "3.9"
+
 services:
   traefik:
     image: traefik:v2.10
     command:
       - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.le.acme.tlschallenge=true
@@ -26,6 +29,7 @@ services:
       - "traefik.http.routers.backend-api.rule=Host(`${API_HOST}`)"
       - "traefik.http.routers.backend-api.entrypoints=websecure"
       - "traefik.http.routers.backend-api.tls.certresolver=le"
+      - "traefik.http.routers.backend-api.tls=true"
       - "traefik.http.services.backend-api.loadbalancer.server.port=3002"
     restart: unless-stopped
 
@@ -40,6 +44,7 @@ services:
       - "traefik.http.routers.backend-admin.rule=Host(`${ADMIN_API_HOST}`)"
       - "traefik.http.routers.backend-admin.entrypoints=websecure"
       - "traefik.http.routers.backend-admin.tls.certresolver=le"
+      - "traefik.http.routers.backend-admin.tls=true"
       - "traefik.http.services.backend-admin.loadbalancer.server.port=3003"
     restart: unless-stopped
 
@@ -59,6 +64,7 @@ services:
       - "traefik.http.routers.frontend-admin.rule=Host(`${FRONTEND_ADMIN_HOST}`)"
       - "traefik.http.routers.frontend-admin.entrypoints=websecure"
       - "traefik.http.routers.frontend-admin.tls.certresolver=le"
+      - "traefik.http.routers.frontend-admin.tls=true"
       - "traefik.http.services.frontend-admin.loadbalancer.server.port=80"
     restart: unless-stopped
 
@@ -69,5 +75,6 @@ services:
       - "traefik.http.routers.frontend-landing.rule=Host(`${FRONTEND_LANDING_HOST}`)"
       - "traefik.http.routers.frontend-landing.entrypoints=websecure"
       - "traefik.http.routers.frontend-landing.tls.certresolver=le"
+      - "traefik.http.routers.frontend-landing.tls=true"
       - "traefik.http.services.frontend-landing.loadbalancer.server.port=80"
     restart: unless-stopped
