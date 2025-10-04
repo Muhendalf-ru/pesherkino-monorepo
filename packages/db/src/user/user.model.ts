@@ -6,7 +6,7 @@ import {
 
 @modelOptions({
   schemaOptions: {
-    timestamps: true, // автоматически createdAt и updatedAt
+    timestamps: true,
   },
 })
 export class User {

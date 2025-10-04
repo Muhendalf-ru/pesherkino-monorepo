@@ -1,0 +1,73 @@
+services:
+  traefik:
+    image: traefik:v2.10
+    command:
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      - --certificatesresolvers.le.acme.email=${LETSENCRYPT_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --log.level=INFO
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./infra/traefik/letsencrypt:/letsencrypt
+    restart: unless-stopped
+
+  backend-api:
+    image: ${REGISTRY_BACKEND_API}
+    environment:
+      - MONGO_URI=${MONGO_URI}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend-api.rule=Host(`${API_HOST}`)"
+      - "traefik.http.routers.backend-api.entrypoints=websecure"
+      - "traefik.http.routers.backend-api.tls.certresolver=le"
+      - "traefik.http.services.backend-api.loadbalancer.server.port=3002"
+    restart: unless-stopped
+
+  backend-admin:
+    image: ${REGISTRY_BACKEND_ADMIN}
+    environment:
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - MONGO_URI=${MONGO_URI}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend-admin.rule=Host(`${ADMIN_API_HOST}`)"
+      - "traefik.http.routers.backend-admin.entrypoints=websecure"
+      - "traefik.http.routers.backend-admin.tls.certresolver=le"
+      - "traefik.http.services.backend-admin.loadbalancer.server.port=3003"
+    restart: unless-stopped
+
+  bot:
+    image: ${REGISTRY_BOT}
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - MONGO_URI=${MONGO_URI}
+    labels:
+      - "traefik.enable=false"
+    restart: unless-stopped
+
+  frontend-admin:
+    image: ${REGISTRY_FRONTEND_ADMIN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-admin.rule=Host(`${FRONTEND_ADMIN_HOST}`)"
+      - "traefik.http.routers.frontend-admin.entrypoints=websecure"
+      - "traefik.http.routers.frontend-admin.tls.certresolver=le"
+      - "traefik.http.services.frontend-admin.loadbalancer.server.port=80"
+    restart: unless-stopped
+
+  frontend-landing:
+    image: ${REGISTRY_FRONTEND_LANDING}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-landing.rule=Host(`${FRONTEND_LANDING_HOST}`)"
+      - "traefik.http.routers.frontend-landing.entrypoints=websecure"
+      - "traefik.http.routers.frontend-landing.tls.certresolver=le"
+      - "traefik.http.services.frontend-landing.loadbalancer.server.port=80"
+    restart: unless-stopped

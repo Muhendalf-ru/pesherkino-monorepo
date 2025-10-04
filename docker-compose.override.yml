@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  # --- FRONTENDS (Dev mode через Vite) ---
+  frontend-admin:
+    command: ["yarn", "dev", "--host", "0.0.0.0", "--port", "5174"]
+    ports:
+      - "${FRONT_ADMIN_PORT:-5174}:5174"
+    volumes:
+      - ./apps/frontend-admin:/app
+      - /app/node_modules
+
+  frontend-landing:
+    command: ["yarn", "dev", "--host", "0.0.0.0", "--port", "5175"]
+    ports:
+      - "${FRONT_LANDING_PORT:-5175}:5175"
+    volumes:
+      - ./apps/frontend-landing:/app
+      - /app/node_modules
+
+  # --- BACKENDS (Dev mode через NestJS) ---
+  backend-admin:
+    command: ["yarn", "start:dev"]
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./apps/backend-admin:/app
+      - /app/node_modules
+
+  backend-api:
+    command: ["yarn", "start:dev"]
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./apps/backend-api:/app
+      - /app/node_modules
+
+  bot:
+    command: ["yarn", "start:dev"]
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./apps/bot:/app
+      - /app/node_modules
