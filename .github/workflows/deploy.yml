@@ -69,8 +69,6 @@ jobs:
     name: Remote deploy via SSH
     needs: build_and_push
     runs-on: ubuntu-latest
-    env:
-      DEPLOY_DIR: ${{ secrets.DEPLOY_DIR }}
     steps:
       - name: Remote deploy via SSH
         uses: appleboy/ssh-action@v0.1.9
@@ -82,15 +80,24 @@ jobs:
           script: |
             set -euo pipefail
             echo "Starting remote deploy"
-            if [ -z "${DEPLOY_DIR:-}" ] || [ "${DEPLOY_DIR}" = "null" ]; then
-              DEPLOY_DIR="$HOME/pesherkino-deploy"
-            fi
+
+            # Жёстко указываем путь к репозиторию
+            DEPLOY_DIR="/root/pesherkino-deploy/pesherkino-monorepo"
             echo "Using DEPLOY_DIR=$DEPLOY_DIR"
+
+            # Проверка существования и контента
             cd "$DEPLOY_DIR" || (echo "deploy dir not found: $DEPLOY_DIR" && exit 1)
+            pwd
+            ls -la
+
+            # Обновление репозитория
             git fetch --all
             git reset --hard origin/main
+
+            # Обновление Docker Compose
             docker compose -f docker-compose.prod.yml pull --ignore-pull-failures
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
             echo "Deploy finished"
 
       - name: Очистка неиспользуемых Docker-образов
