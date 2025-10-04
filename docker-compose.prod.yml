@@ -78,3 +78,14 @@ services:
       - "traefik.http.routers.frontend-landing.tls=true"
       - "traefik.http.services.frontend-landing.loadbalancer.server.port=80"
     restart: unless-stopped
+
+  frontend-main:
+    image: ${REGISTRY_FRONTEND_MAIN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend-main.rule=Host(`${FRONTEND_MAIN_HOST}`)"
+      - "traefik.http.routers.frontend-main.entrypoints=websecure"
+      - "traefik.http.routers.frontend-main.tls.certresolver=le"
+      - "traefik.http.routers.frontend-landing.tls=true"
+      - "traefik.http.services.frontend-landing.loadbalancer.server.port=80"
+    restart: unless-stopped

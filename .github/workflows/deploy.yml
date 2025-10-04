@@ -65,6 +65,14 @@ jobs:
           push: true
           tags: ${{ secrets.REGISTRY_FRONTEND_LANDING }}
 
+      - name: Build & push frontend-main
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./apps/frontend-main/Dockerfile
+          push: true
+          tags: ${{ secrets.REGISTRY_FRONTEND_MAIN }}
+
   remote_deploy:
     name: Remote deploy via SSH
     needs: build_and_push
