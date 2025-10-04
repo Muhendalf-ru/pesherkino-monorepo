@@ -1,39 +1,35 @@
-# Stage 1: build
+# ====== Build stage ======
 FROM node:20-alpine AS build
 
-# Corepack и Yarn 4
+# Corepack + Yarn 4
 RUN corepack enable && corepack prepare yarn@4.10.2 --activate
 
 WORKDIR /app
 
-# Копируем package.json и lockfile
-COPY package.json yarn.lock ./
+# Копируем весь репозиторий, чтобы Yarn видел workspace пакеты
+COPY . .
 
-# Копируем весь workspace, чтобы Yarn видел пакеты
-COPY packages ./packages
-COPY apps/bot ./apps/bot
+# Устанавливаем все зависимости (включая dev)
+RUN yarn install --inline-builds
 
+# Собираем bot
 WORKDIR /app/apps/bot
-
-# Устанавливаем все зависимости только для разработки и сборки
-RUN yarn workspaces focus --all --production=false
 RUN yarn build
 
-# Stage 2: production
+# ====== Runtime stage ======
 FROM node:20-alpine
 
 RUN corepack enable && corepack prepare yarn@4.10.2 --activate
 
 WORKDIR /app
 
-# Копируем только собранное приложение
+# Копируем только собранный билд и package.json
 COPY --from=build /app/apps/bot/dist ./dist
 COPY --from=build /app/apps/bot/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
-COPY --from=build /app/packages ./packages
 
-# Устанавливаем только production зависимости
-RUN yarn workspaces focus --all --production
+# Устанавливаем только production-зависимости для bot
+RUN yarn workspaces focus --production -A
 
 EXPOSE 4000
 CMD ["node", "dist/main.js"]

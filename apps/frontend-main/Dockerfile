@@ -1,27 +1,22 @@
-# Stage 1: build
+# ====== Build stage ======
 FROM node:20-alpine AS build
 
-# Corepack и Yarn 4
+# Corepack + Yarn 4
 RUN corepack enable && corepack prepare yarn@4.10.2 --activate
 
 WORKDIR /app
 
-# Копируем package.json и lockfile
-COPY package.json yarn.lock ./
+# Копируем весь репозиторий, чтобы Yarn видел workspace пакеты
+COPY . .
 
-# Копируем весь workspace, чтобы Yarn видел все пакеты
-COPY packages ./packages
-COPY apps/frontend-main ./apps/frontend-main
+# Устанавливаем все зависимости для сборки (включая dev)
+RUN yarn install --inline-builds
 
+# Собираем frontend-main
 WORKDIR /app/apps/frontend-main
-
-# Устанавливаем зависимости с учётом workspace
-RUN yarn workspaces focus --all --production=false
-
-# Собираем фронтенд
 RUN yarn build
 
-# Stage 2: production
+# ====== Runtime stage ======
 FROM nginx:alpine
 
 # Копируем готовый билд
