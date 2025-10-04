@@ -89,6 +89,16 @@ jobs:
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
             echo "Deploy finished"
 
+      - name: Очистка неиспользуемых Docker-образов (image prune)
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_SSH_PORT }}
+          script: |
+            docker image prune -af
+
       - name: Smoke test (https endpoints)
         run: |
           for url in https://${API_HOST} https://${ADMIN_API_HOST} https://${FRONTEND_ADMIN_HOST} https://${FRONTEND_LANDING_HOST}; do

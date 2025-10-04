@@ -10,10 +10,10 @@
 - `REGISTRY_USER` — логин в реестр
 - `REGISTRY_TOKEN` — токен/пароль для реестра
 - `REGISTRY_BACKEND_API` — полный тег образа backend-api (например, `ghcr.io/org/backend-api:latest`)
-- `REGISTRY_BACKEND_ADMIN` — тег backend-admin
-- `REGISTRY_BOT` — тег bot
-- `REGISTRY_FRONTEND_ADMIN` — тег frontend-admin
-- `REGISTRY_FRONTEND_LANDING` — тег frontend-landing
+- `REGISTRY_BACKEND_ADMIN` — тег backend-admin (например, `ghcr.io/muhendalf-ru/backend-admin:latest`)
+- `REGISTRY_BOT` — тег bot (например, `ghcr.io/muhendalf-ru/bot:latest`)
+- `REGISTRY_FRONTEND_ADMIN` — тег frontend-admin (например, `ghcr.io/muhendalf-ru/frontend-admin:latest`)
+- `REGISTRY_FRONTEND_LANDING` — тег frontend-landing (например, `ghcr.io/muhendalf-ru/frontend-landing:latest`)
 
 **Для деплоя на сервер:**
 
