@@ -16,8 +16,8 @@ COPY apps/backend-api ./apps/backend-api
 
 WORKDIR /app/apps/backend-api
 
-# Устанавливаем все зависимости (dev + prod)
-RUN yarn install --frozen-lockfile
+# Устанавливаем все зависимости корректно для Yarn 4
+RUN yarn install --immutable --inline-builds
 
 # Собираем проект
 RUN yarn build
@@ -38,7 +38,7 @@ COPY --from=build /app/apps/backend-api/package.json ./package.json
 COPY --from=build /app/yarn.lock ./yarn.lock
 
 # Устанавливаем только production зависимости
-RUN yarn install --frozen-lockfile --mode=production
+RUN yarn install --immutable --inline-builds --mode=production
 
 EXPOSE 3002
 CMD ["node", "dist/main.js"]
