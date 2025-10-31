@@ -120,7 +120,7 @@ jobs:
 
       - name: Smoke test (https endpoints)
         run: |
-          for url in https://${API_HOST} https://${ADMIN_API_HOST} https://${FRONTEND_ADMIN_HOST} https://${FRONTEND_LANDING_HOST}; do
+          for url in https://${API_HOST} https://${ADMIN_API_HOST} https://${FRONTEND_ADMIN_HOST} https://${FRONTEND_LANDING_HOST} https://${FRONTEND_MAIN_HOST}; do
             echo "Testing $url ..."
             curl -k --max-time 10 --retry 3 --retry-connrefused $url || exit 1
           done
